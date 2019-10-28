@@ -5,7 +5,6 @@ contract Eirbmon{
     struct Pokemon {
         uint id;
         string name;
-        address account;
         int level;
     }
     uint public pokemonsCount = 0;
@@ -15,9 +14,9 @@ contract Eirbmon{
         addPokemon("Pika");
         addPokemon("Wartortle");
     }
-    function  addPokemon(string memory _name) public {
+    function  addPokemon(string memory _name) private {
         pokemonsCount++;
-        pokemons[pokemonsCount] = Pokemon(pokemonsCount,_name, msg.sender,0);
+        pokemons[pokemonsCount] = Pokemon(pokemonsCount,_name,0);
     }
 
     function get(uint i) public view returns (string memory)  {
