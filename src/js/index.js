@@ -1,10 +1,10 @@
 $(document).ready(function () {
     var loader = $("#loader");
     var content = $("#content");
-
+    console.log(window.web3.currentProvider.selectedAddress)
     loader.show();
     content.hide();
-    $.get('/getMyEirbmon', function (response) {
+    $.get(`/getMyEirbmon?address=${window.web3.currentProvider.selectedAddress}`, function (response) {
         
         var pokemonsResults = $("#pokemonsResults");
         for (var i = 0; i < response.length; i++) {

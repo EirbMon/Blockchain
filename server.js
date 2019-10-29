@@ -27,11 +27,15 @@ app.get('/getAccounts', (req, res) => {
 // afficher mes eirbmon
 app.get('/getMyEirbmon', (req, res) => {
   console.log("**** GET /getMyEirbmon ****");
-  truffle_connect.getMyEirbmon(function (answer) {
+  truffle_connect.getMyEirbmon(req.query.address,function (answer) {
     res.send(answer);
   })
 });
 
+// renvoie Eirbmon.json
+app.get('/Eirbmon.json', (req, res) => {
+  res.send(eirbmon_artifact)
+ });
 
 app.listen(port, () => {
 

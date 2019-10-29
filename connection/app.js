@@ -35,23 +35,26 @@ module.exports = {
       callback(self.accounts);
     });
   },
-  getMyEirbmon: function(callback) {
+  getMyEirbmon: function(account,callback) {
     var self = this;
 
     // Bootstrap the Eirbmon abstraction for Use.
     Eirbmon.setProvider(self.web3.currentProvider);
-
+    
     Eirbmon.deployed().then(function(instance) {
       eirbmonInstance = instance;
-      return eirbmonInstance.pokemonsCount();
-    }).then(function(pokemonsCount) {
+      return eirbmonInstance.eirbmonsCount();
+    }).then(function(eirbmonsCount) {
+      console.log(eirbmonsCount)
       var response = [];
       var tabProm = [];
-      for (var i = 1; i <= pokemonsCount; i++) {
-        tabProm[i] = eirbmonInstance.pokemons(i);
-        tabProm[i].then(function(pokemon) {
-          response.push(pokemon);
-
+      for (var i = 0; i < eirbmonsCount; i++) {
+        tabProm[i] = eirbmonInstance._Eirbmons(i);
+        tabProm[i].then(function(eirbmon) {
+          console.log(account,eirbmon)
+          if(eirbmon[2] == account){
+            response.push(eirbmon);
+          }
          })
       }
       Promise.all(tabProm).then(()=>callback(response),()=>console.log('error'));

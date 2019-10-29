@@ -57,7 +57,7 @@ App = {
     }).then(function(pokemonsCount) {
       var pokemonsResults = $("#pokemonsResults");
       pokemonsResults.empty();
-
+      
       // var pokemonSelect = $('#pokemonSelect');
       // pokemonSelect.empty();
 
