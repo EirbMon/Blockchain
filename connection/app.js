@@ -46,15 +46,21 @@ module.exports = {
       return eirbmonInstance.eirbmonsCount();
     }).then(function(eirbmonsCount) {
       console.log(eirbmonsCount)
-      var response = [];
+      var response = {"Pokemons":[]};
       var tabProm = [];
       for (var i = 0; i < eirbmonsCount; i++) {
         tabProm[i] = eirbmonInstance._Eirbmons(i);
         tabProm[i].then(function(eirbmon) {
-          console.log(account,eirbmon)
-          if(eirbmon[2] == account){
-            response.push(eirbmon);
-          }
+          console.log(eirbmon[2],account)
+          // console.log(eirbmon)
+          let item = {"type":eirbmon[7],"name":eirbmon[1],"color":eirbmon[4],"position_x":Number(eirbmon[5]),"position_y":Number(eirbmon[6])};
+          console.log(item)
+          response.Pokemons.push(item);
+
+          // if(eirbmon[2] == account){
+          //   console.log('ok')
+          //   response.push(eirbmon);
+          // }
          })
       }
       Promise.all(tabProm).then(()=>callback(response),()=>console.log('error'));
