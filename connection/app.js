@@ -51,10 +51,7 @@ module.exports = {
       for (var i = 0; i < eirbmonsCount; i++) {
         tabProm[i] = eirbmonInstance._Eirbmons(i);
         tabProm[i].then(function(eirbmon) {
-          console.log(eirbmon[2],account)
-          // console.log(eirbmon)
           let item = {"type":eirbmon[7],"name":eirbmon[1],"color":eirbmon[4],"position_x":Number(eirbmon[5]),"position_y":Number(eirbmon[6])};
-          console.log(item)
           response.Pokemons.push(item);
 
           // if(eirbmon[2] == account){
