@@ -41,35 +41,37 @@ contract Eirbmon{
 
     // génère un nouvel Eirbmon random
     function generateAnNewEirbmon(uint bloc) public {
-
-        uint randAtkWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**22))%sumWeight(allAtkWeight)+1;
+        // génère un nomnbre entre 1 et la somme des poids à partir des 44 premiers nombres hex du hash
+        uint randAtkWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**22))%sumArray(allAtkWeight)+1;
         string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
 
-        uint randFieldWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**44))%sumWeight(allFieldWeight);
+        uint randFieldWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**44))%sumArray(allFieldWeight);
         string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
 
-        uint randNameWeight = uint(uint(blockhash(block.number-bloc)))%sumWeight(allNameWeight);
+        uint randNameWeight = uint(uint(blockhash(block.number-bloc)))%sumArray(allNameWeight);
         string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
         addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,100);
     }
 
-    function getValueFromRand(string[] memory valueArray,uint[] memory weightArray,uint randNameWeight) public view returns(string memory) {
-        uint S = 0x0;
+    // renvoie la valeur associé au nombre random passé en arguments en prenant en compte les poids de chaque valeur 
+    function getValueFromRand(string[] memory valueArray,uint[] memory weightArray,uint randNameWeight) public pure returns(string memory) {
+        uint sum = 0x0;
         for(uint i = 0;i < weightArray.length;i++){
-            S += weightArray[i];
-            if(randNameWeight <= S){
+            sum += weightArray[i];
+            if(randNameWeight <= sum){
                 return valueArray[i];
             }
         }
     }
 
-    function sumWeight(uint[] memory _array) public view returns(uint) {
-        uint S = 0x0;
+    //Fait la somme de tous les éléments d'un tableau 
+    function sumArray(uint[] memory _array) public pure returns(uint) {
+        uint sum = 0x0;
          for(uint i;i < _array.length;i++){
-            S += _array[i];
+            sum += _array[i];
         }
-        return S;
+        return sum;
     }
 
 
