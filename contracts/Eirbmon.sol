@@ -1,4 +1,6 @@
 pragma solidity ^0.5.8;
+pragma experimental ABIEncoderV2;
+
 
 contract Eirbmon{
 
@@ -39,42 +41,28 @@ contract Eirbmon{
 
     // génère un nouvel Eirbmon random
     function generateAnNewEirbmon(uint bloc) public {
-        string memory selectedAtk;
-        string memory selectedField;
-        string memory selectedName;
 
         uint randAtkWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**22))%sumWeight(allAtkWeight)+1;
-        uint S1 = 0x0;
-        for(uint i = 0;i < allAtkWeight.length;i++){
-            S1 += allAtkWeight[i];
-            if(randAtkWeight <= S1){
-                selectedAtk=allAtk[i] ;
-                break;
-            }
-        }
+        string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
 
         uint randFieldWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**44))%sumWeight(allFieldWeight);
-        uint S2 = 0x0;
-        for(uint i = 0;i < allFieldWeight.length;i++){
-            S2 += allFieldWeight[i];
-            if(randFieldWeight <= S2){
-                selectedField = allField[i];
-                break;
-            }
-        }
+        string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
 
         uint randNameWeight = uint(uint(blockhash(block.number-bloc)))%sumWeight(allNameWeight);
-        uint S3 = 0x0;
-        for(uint i = 0;i < allNameWeight.length;i++){
-            S3 += allNameWeight[i];
-            if(randNameWeight <= S3){
-                selectedName = allName[i];
-                break;
-            }
-        }
+        string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
+
         addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,100);
     }
 
+    function getValueFromRand(string[] memory valueArray,uint[] memory weightArray,uint randNameWeight) public view returns(string memory) {
+        uint S = 0x0;
+        for(uint i = 0;i < weightArray.length;i++){
+            S += weightArray[i];
+            if(randNameWeight <= S){
+                return valueArray[i];
+            }
+        }
+    }
 
     function sumWeight(uint[] memory _array) public view returns(uint) {
         uint S = 0x0;
