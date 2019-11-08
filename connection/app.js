@@ -1,16 +1,14 @@
+const Web3 = require('web3');
 const contract = require('truffle-contract');
-
 const eirbmon_artifact = require('../build/contracts/Eirbmon.json');
 var Eirbmon = contract(eirbmon_artifact);
 
-module.exports = {
-  start: function(callback) {
+  function start (callback) {
     var self = this;
-
     // Bootstrap the Eirbmon abstraction for Use.
-    Eirbmon.setProvider(self.web3.currentProvider);
+      Eirbmon.setProvider(web3.currentProvider);
 
-    self.web3.eth.getCoinbase(function(err, account) {
+    web3.eth.getCoinbase(function(err, account) {
       if (err === null) {
         console.log(account);
       }else{
@@ -19,7 +17,7 @@ module.exports = {
       }
     });
     // Get the initial account balance so it can be displayed.
-    self.web3.eth.getAccounts(function(err, accs) {
+    web3.eth.getAccounts(function(err, accs) {
       if (err != null) {
         console.log("There was an error fetching your accounts.");
         return;
@@ -31,42 +29,38 @@ module.exports = {
       }
       self.accounts = accs;
       self.account = self.accounts[2];
-
+      console.log(self.accounts);
       callback(self.accounts);
     });
-  },
-  getMyEirbmon: function(account,callback) {
-    var self = this;
+  }; 
 
+  function initEirbmon (acc) {
     // Bootstrap the Eirbmon abstraction for Use.
-    Eirbmon.setProvider(self.web3.currentProvider);
-    
+    Eirbmon.setProvider(web3.currentProvider);
+    console.log("here");
+    // if (typeof Eirbmon.currentProvider.sendAsync !== "function") {
+    //   Eirbmon.currentProvider.sendAsync = function() {
+    //     return Eirbmon.currentProvider.send.apply(
+    //       Eirbmon.currentProvider,
+    //           arguments
+    //     );
+    //   };
+    // }
+    Eirbmon.deployed().then(function(instance) {app = instance});
+
     Eirbmon.deployed().then(function(instance) {
-      eirbmonInstance = instance;
-      return eirbmonInstance.eirbmonsCount();
-    }).then(function(eirbmonsCount) {
-      console.log(eirbmonsCount)
-      var response = {"Pokemons":[]};
-      var tabProm = [];
-      for (var i = 0; i < eirbmonsCount; i++) {
-        tabProm[i] = eirbmonInstance._Eirbmons(i);
-        tabProm[i].then(function(eirbmon) {
-          let item = {"type":eirbmon[7],"name":eirbmon[1],"color":eirbmon[4],"position_x":Number(eirbmon[5]),"position_y":Number(eirbmon[6])};
-          response.Pokemons.push(item);
-
-          // if(eirbmon[2] == account){
-          //   console.log('ok')
-          //   response.push(eirbmon);
-          // }
-         })
-      }
-      Promise.all(tabProm).then(()=>callback(response),()=>console.log('error'));
-
-      
+     app = instance;
+     app._Eirbmons(1).then(x=>console.log(console.log("Eirbmons[1] : " + x)))  
+   return app; }).then((app)=>{
+      try{
+      //  app.initAccount({from : acc[7],gas:3000000});
+    //    app.getEirbmon().then(x=>console.log(x));
+        }catch(error){console.log("hello")} //      app.initAccount({from : acc[1]});
+     //    app.initAccount({from : acc[3]});
+     return app;
     })
-
-  },
-
-}
-
+   
+  }
+  const web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:7545"));
+  start(accounts=>initEirbmon(accounts));
 

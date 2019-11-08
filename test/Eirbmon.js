@@ -1,20 +1,42 @@
 var Eirbmon = artifacts.require("./Eirbmon.sol");
-var pokeInstance;
+var EirbmonInstance;
+it("initialises with  3 Eirbmons",function(){
+    return Eirbmon.deployed().then(instance =>
+                          instance.eirbmonsCount()).
+                          then(count => assert.equal(count,3))});
 
-it("d",function(){
+
+it("initialises with the _Eirbmons with correct values",function(){
     return Eirbmon.deployed().then(instance =>{
-        for (let index = 0; index < 100; index++) {
-            instance.generateAnNewEirbmon(index).then(count => console.log(count))
-        }
-        })                      
-
-});
-// it("initialises with two pokemons",function(){
-//     return Eirbmon.deployed().then(instance =>
-//                           instance.eirbmonsCount()).
-//                           then(count => assert(count,3))
-
-// });
+                          EirbmonInstance = instance;
+                          return EirbmonInstance._Eirbmons(0);}).
+                          then(_Eirbmon => {assert.equal(_Eirbmon[0],0);
+                            assert.equal(_Eirbmon[1],"Gribouille");
+                            assert.equal(_Eirbmon[3],0);
+                            return EirbmonInstance._Eirbmons(1);
+                     })
+                     
+                      . then(_Eirbmon => {assert.equal(_Eirbmon[0],1);
+                         assert.equal(_Eirbmon[1],"Artpick");
+                         assert.equal(_Eirbmon[3],0);
+                         return EirbmonInstance._Eirbmons(2);
+                     })
+                     .then(_Eirbmon=>{
+                         assert.equal(_Eirbmon[0],2);
+                        assert.equal(_Eirbmon[1],"Loustick");
+                        assert.equal(_Eirbmon[3],0);
+                     })
+                
+                })
+                                        
+                                        
+                                        
+ it("add an Eirbmon",function(){
+     Eirbmon.deployed().then(instance =>{
+         return instance.addEirbmon("pika");
+     })
+ })
+                                   
 
 // it("initialises with the pokemons with correct values",function(){
 //     return Eirbmon.deployed().then(instance =>{
@@ -26,3 +48,6 @@ it("d",function(){
 //                         })
 
 // });
+//test in console
+//  Eirbmon.deployed().then(instance=>app=instance);web3.eth.getAccounts().then(A=>acc=A)
+//

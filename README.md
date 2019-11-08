@@ -12,5 +12,8 @@ You can add src files to interact with blockchain network by web3
 
 #test that your blocks are perfectly instantiated  : truffle test
 
+
+#run initBlockchain.sh to compile,migrate and test the smartContratcs
+
 #run the web server  http://localhost:3000/  : npm run dev 
 #you need to activate your wallet and choose a custom RPC network : HTTP://127.0.0.1:7545
