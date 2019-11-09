@@ -15,9 +15,10 @@ pipeline {
     }
     stage('Truffle') {
         steps {
-        sh 'pwd'
+        sh 'npm install truffle'
         sh 'truffle compile'
         sh 'truffle migrate'
+        sh 'cp build/contracts/Eirbmon.json /home/eirbmon/Documents/SharedFile'
         echo 'Truffle ok'
         }
     }
