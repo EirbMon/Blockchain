@@ -12,7 +12,7 @@ pipeline {
         sh 'npm install -g truffle'
         sh 'npm install'
         sh 'truffle compile'
-        sh 'truffle migrate'
+        // sh 'truffle migrate'
         echo 'Everything is okay, we can continue !'
       }
     }
