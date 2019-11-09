@@ -9,7 +9,7 @@ pipeline {
 
       }
       steps {
-        sh 'npm install truffle'
+        sh 'npm install -g truffle'
         sh 'npm install'
         echo 'Everything is okay, we can continue !'
       }
