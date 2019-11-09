@@ -18,9 +18,9 @@ pipeline {
     }
     stage('Truffle') {
         steps {
-
-        sh 'cp build/contracts/Eirbmon.json /home/eirbmon/Documents/SharedFile'
-        echo 'Truffle ok'
+            sh 'pwd'
+            sh 'cp /var/jenkins_home/workspace/Blockchain/build/contracts/Eirbmon.json /home/eirbmon/Documents/SharedFile'
+            echo 'Truffle ok'
         }
     }
   }
