@@ -5,7 +5,7 @@ pipeline {
       agent {
         docker {
           image 'node:8'
-          args '-v /home/eirbmon/Documents/SharedFile:/Shared'
+          args '-v /home/eirbmon/Documents/SharedFile:/Shared --network="host"'
         }
 
       }
