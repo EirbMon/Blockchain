@@ -13,7 +13,7 @@ pipeline {
         sh 'npm install -g truffle'
         sh 'npm install'
         sh 'truffle compile'
-        sh 'truffle migrate'
+        sh 'truffle migrate --reset'
         sh 'cp build/contracts/Eirbmon.json /Shared'
         echo 'copy'
       }
