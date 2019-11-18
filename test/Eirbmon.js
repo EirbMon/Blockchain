@@ -50,4 +50,6 @@ it("initialises with the _Eirbmons with correct values",function(){
 // });
 //test in console
 //  Eirbmon.deployed().then(instance=>app=instance);web3.eth.getAccounts().then(A=>acc=A)
-//
+//  app.initAccount({from:acc[0] })
+//  app._Eirbmons(1).then(a=>b=a)
+// app.generateAnNewEirbmon('0x9ea17fa94c4ef95216bb1774a8ecd9d83be7a56f423bd74c217868eaa3c67fcb');
