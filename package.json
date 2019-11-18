@@ -22,13 +22,14 @@
     "css-loader": "^3.2.0",
     "json-loader": "^0.5.4",
     "style-loader": "^0.13.1",
-    "truffle-contract": "^1.1.11",
+    "truffle-contract": "3.0.4",
     "web3": "^0.20.0"
   },
   "dependencies": {
     "body-parser": "^1.18.2",
     "cors": "^2.8.5",
     "express": "^4.16.2",
+    "fs": "0.0.1-security",
     "jquery": "^3.3.1",
     "nodemon": "^1.14.12"
   }
