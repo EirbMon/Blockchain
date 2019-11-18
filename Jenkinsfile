@@ -1,28 +1,43 @@
 pipeline {
   agent any
   stages {
-    stage('Check dependencies') {
+     stage('Truffle for prod') {
+      when {
+        branch "master"
+      }
       agent {
         docker {
           image 'node:8'
+          args '-v /home/eirbmon/Documents/SharedFile:/Shared --network="host"'
         }
-
       }
       steps {
         sh 'npm install -g truffle'
         sh 'npm install'
         sh 'truffle compile'
-        // sh 'truffle migrate'
-        echo 'Everything is okay, we can continue !'
+        sh 'truffle migrate --reset'
+        sh 'cp build/contracts/Eirbmon.json /Shared'
+        echo 'copy'
       }
     }
-    stage('Truffle') {
-        steps {
-            sh 'ls'
-            sh 'cd build'
-            sh 'cp /var/jenkins_home/workspace/Blockchain/build/contracts/Eirbmon.json /home/eirbmon/Documents/SharedFile'
-            echo 'Truffle ok'
+    stage('Truffle for dev') {
+      when {
+        branch "dev"
+      }
+      agent {
+        docker {
+          image 'node:8'
+          args '-v /home/eirbmon/Documents/SharedFileDev:/Shared --network="host"'
         }
+      }
+      steps {
+        sh 'npm install -g truffle'
+        sh 'npm install'
+        sh 'truffle compile'
+        sh 'truffle migrate --reset'
+        sh 'cp build/contracts/Eirbmon.json /Shared'
+        echo 'copy'
+      }
     }
   }
 }
