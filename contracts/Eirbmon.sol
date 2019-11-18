@@ -32,7 +32,7 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
-        addEirbmonToChain("pika",0x0000000000000000000000000000000000000000,"telecom","roulade",100);
+        addEirbmonToChain("pika",msg.sender,"telecom","roulade",100);
     }
 
     // ajoute un Eirbmon à la chaine
