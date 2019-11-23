@@ -13,6 +13,8 @@ contract Eirbmon{
         string atk;
         uint hp;
     }
+    event SendEvent(string message);
+ 
     uint public rnd = 1;
 
     string[] private allAtk = ["roulade","petite bière","brasse","rattrapage"];
@@ -32,7 +34,7 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
-        addEirbmonToChain("pika",msg.sender,"telecom","roulade",100);
+        generateAnNewEirbmon();
     }
 
     // ajoute un Eirbmon à la chaine
@@ -48,15 +50,15 @@ contract Eirbmon{
     }
 
     // génère un nouvel Eirbmon random
-    function generateAnNewEirbmon(uint bloc) public {
+    function generateAnNewEirbmon() private {
         // génère un nombre entre 1 et la somme des poids à partir des 44 premiers nombres hex du hash
-        uint randAtkWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**22))%sumArray(allAtkWeight)+1;
+        uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**22))%sumArray(allAtkWeight)+1;
         string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
 
-        uint randFieldWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**44))%sumArray(allFieldWeight);
+        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**44))%sumArray(allFieldWeight);
         string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
 
-        uint randNameWeight = uint(uint(blockhash(block.number-bloc)))%sumArray(allNameWeight);
+        uint randNameWeight = uint(uint(blockhash(block.number-1)))%sumArray(allNameWeight);
         string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
         addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,100);
@@ -101,6 +103,29 @@ contract Eirbmon{
                }
             }
             return ownerEirbmons;
+    }
+
+    function isExisted(uint _EirbmonId) public view returns (bool){
+        return _EirbmonId<=eirbmonsCount;
+    }
+    function isOrphan(uint _EirbmonId) public view returns (bool){
+        return _Eirbmons[_EirbmonId].owner == 0x0000000000000000000000000000000000000000;
+    }
+
+    function getBlockNumber() public view returns(uint){
+        return block.number;
+    }
+    
+    function changeOwner(address owner,uint _EirbmonId) private {
+            _Eirbmons[_EirbmonId].owner = owner;
+    }
+
+    function catchEirbmon(uint _EirbmonId) public returns  (bytes32) {
+            require(isExisted(_EirbmonId));
+            require(isOrphan(_EirbmonId));
+            generateAnNewEirbmon();
+            changeOwner(msg.sender,_EirbmonId);
+            emit SendEvent("catched");
     }
 }
 
