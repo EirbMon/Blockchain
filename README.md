@@ -39,3 +39,5 @@ You can add src files to interact with blockchain network by web3
 
 #run the web server  http://localhost:3000/  : npm run dev 
 #you need to activate your wallet and choose a custom RPC network : HTTP://127.0.0.1:7545
+
+/!\ pour se connecter à sa blockchain local il faut remplacer 192.168.0.23 par 127.0.0.1 dans le fichier truffle-config.js
