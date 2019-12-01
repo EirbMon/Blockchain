@@ -34,6 +34,10 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
+        addEirbmonToChain("Pikachu",msg.sender,"telecom","roulade",100);
+        addEirbmonToChain("Roucoul",msg.sender,"elec","petite bière",100);
+        addEirbmonToChain("Roucoul",0x0000000000000000000000000000000000000000,"info","petite bière",100);
+        addEirbmonToChain("Pikachu",0x0000000000000000000000000000000000000000,"SEE","petite bière",100);
         generateAnNewEirbmon();
     }
 
