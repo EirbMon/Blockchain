@@ -116,7 +116,8 @@ contract Eirbmon{
         return block.number;
     }
     
-    function changeOwner(address owner,uint _EirbmonId) private {
+    function appropriateEirbmonToOwner(address owner,uint _EirbmonId) private {
+          //  require (_registeredAccounts[owner],"Sender does not exist");
             _Eirbmons[_EirbmonId].owner = owner;
     }
 
@@ -124,9 +125,25 @@ contract Eirbmon{
             require(isExisted(_EirbmonId));
             require(isOrphan(_EirbmonId));
             generateAnNewEirbmon();
-            changeOwner(msg.sender,_EirbmonId);
+            appropriateEirbmonToOwner(msg.sender,_EirbmonId);
             emit SendEvent("catched");
     }
+
+
+     //Change the owner of an Eirbmon  
+    function changeEirbmonOwner(uint idEirbmon,address newOwner,address oldOwner ) public {
+        // require (_registeredAccounts[oldOwner],"Sender does not exist");
+        require (oldOwner == _Eirbmons[idEirbmon].owner,"Sender is not the owner");
+        // require (_registeredAccounts[newOwner],"Receiver does not exist");
+        _Eirbmons[idEirbmon].owner = newOwner;
+    }
+
+    // tranfer an 2 Eirbmons
+      function transferEirbmon(uint idEirbmon1,address owner1,uint idEirbmon2,address owner2 ) public {
+          changeEirbmonOwner(idEirbmon2,owner1,owner2);
+          changeEirbmonOwner(idEirbmon1,owner2,owner1);
+    }
+
 }
 
 
