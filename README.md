@@ -16,6 +16,7 @@
 
 - Ouvrir un terminal dans /Blockchain/
 - Faire: npm install truffle -g
+- modifier config.js: host: "192.168.0.23" ou mettre 127.0.0.1 en local
 - Faire: truffle compile
 - Faire: truffle migrate --reset
 
