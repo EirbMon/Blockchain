@@ -4,3 +4,4 @@
 package-lock.json
 \.vscode/
 /src/
+truffle-config.js
