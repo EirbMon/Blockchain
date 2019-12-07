@@ -3,9 +3,9 @@ module.exports = {
   // for more about customizing your Truffle configuration!
   networks: {
     development: {
-      host: "192.168.0.23", //mettre 127.0.0.1 en local
+      host: "eirbmon.hopto.org", //mettre 127.0.0.1 en local
       port: 8545,
-      network_id: "*"// Match any network id
+      network_id: "5999"// Match any network id
     },
     develop: {
       port: 8545
