@@ -16,7 +16,7 @@ pipeline {
         sh 'npm install'
         sh 'truffle compile'
         sh 'truffle migrate --reset'
-        sh 'cp build/contracts/ /Shared'
+        sh 'cp build/contracts/* /Shared'
         echo 'copy'
       }
     }
@@ -35,7 +35,7 @@ pipeline {
         sh 'npm install'
         sh 'truffle compile'
         sh 'truffle migrate --reset'
-        sh 'cp build/contracts/ /Shared'
+        sh 'cp build/contracts/* /Shared'
         echo 'copy'
       }
     }
