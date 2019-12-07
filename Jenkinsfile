@@ -35,6 +35,7 @@ pipeline {
         sh 'npm install'
         sh 'truffle compile'
         sh 'truffle migrate --reset'
+        sh 'pwd'
         sh 'cp build/contracts/* /Shared'
         echo 'copy'
       }
