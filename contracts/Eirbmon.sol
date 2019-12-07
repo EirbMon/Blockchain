@@ -36,8 +36,7 @@ contract Eirbmon{
     constructor () public {
         addEirbmonToChain("Pikachu",msg.sender,"telecom","roulade",100);
         addEirbmonToChain("Roucoul",msg.sender,"elec","petite bière",100);
-        addEirbmonToChain("Roucoul",0x0000000000000000000000000000000000000000,"info","petite bière",100);
-        addEirbmonToChain("Pikachu",0x0000000000000000000000000000000000000000,"SEE","petite bière",100);
+        generateAnNewEirbmon();
         generateAnNewEirbmon();
     }
 
@@ -56,16 +55,18 @@ contract Eirbmon{
     // génère un nouvel Eirbmon random
     function generateAnNewEirbmon() private {
         // génère un nombre entre 1 et la somme des poids à partir des 44 premiers nombres hex du hash
-        uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**22))%sumArray(allAtkWeight)+1;
+        uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%sumArray(allAtkWeight)+1;
         string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
 
-        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**44))%sumArray(allFieldWeight);
+        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumArray(allFieldWeight);
         string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
 
-        uint randNameWeight = uint(uint(blockhash(block.number-1)))%sumArray(allNameWeight);
+        uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumArray(allNameWeight);
         string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
-        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,100);
+        uint randHp = uint(uint(blockhash(block.number-1))%0x1F4 + 100);
+
+        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,randHp);
     }
 
     // renvoie la valeur associé au nombre random passé en arguments en prenant en compte les poids de chaque valeur 
