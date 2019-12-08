@@ -35,7 +35,7 @@ contract Eirbmon{
 
     constructor () public {
         addEirbmonToChain("Pikachu",msg.sender,"telecom","roulade",100);
-        addEirbmonToChain("Roucoul",msg.sender,"elec","petite bière",100);
+        addEirbmonToChain("Roucoul",msg.sender,"info","petite bière",100);
         generateAnNewEirbmon();
         generateAnNewEirbmon();
     }
