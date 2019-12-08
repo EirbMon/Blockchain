@@ -23,7 +23,7 @@ contract Eirbmon{
     string[] private allField = ["RSI","SEE","Elec","Matmeca","Info","Telecom"];
     uint[] private allFieldWeight = [0xa,0x8,0x6,0x4,0x2,0x1]; // poids entre 1 et 10 avec 1=> très rare
  
-    string[] private allName = ["nom1","nom2","nom3","nom4"];
+    string[] private allName = ["Pikachu","Carapuce","Salameche","Roucoul"];
     uint[] private allNameWeight = [0xa,0x6,0x3,0x1]; // poids entre 1 et 10 avec 1=> très rare
 
     uint public eirbmonsCount = 0;
