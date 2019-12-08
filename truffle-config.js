@@ -8,7 +8,7 @@ module.exports = {
       network_id: "5999"// Match any network id
     },
     develop: {
-      port: 8545
+      port: 9545
     }
   }
 };
