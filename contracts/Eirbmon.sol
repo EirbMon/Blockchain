@@ -49,7 +49,7 @@ contract Eirbmon{
     function initAccount() public {
         require(!_registeredAccounts[msg.sender]);
         _registeredAccounts[msg.sender] = true;
-        addEirbmonToChain("nom1",msg.sender,"RSI","roulade",40);
+        addEirbmonToChain("Roucoul",msg.sender,"RSI","roulade",40);
     }
 
     // génère un nouvel Eirbmon random
