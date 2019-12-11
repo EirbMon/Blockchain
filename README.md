@@ -41,8 +41,10 @@ You can add src files to interact with blockchain network by web3
 #run the web server  http://localhost:3000/  : npm run dev 
 #you need to activate your wallet and choose a custom RPC network : HTTP://127.0.0.1:7545
 
+#If you use ganache in another host, make sure that you use the rigth  migration's files provided by the console that you migrated with. 
 
-#For developement needs :
+
+## For developement needs :
  
 TUTO : 
 
@@ -54,12 +56,14 @@ Ouvrir Ganache et lance bash initBlockchain.sh dans le terminal si ce n'est pas 
 app est l'instanciation du smart contract, et acc est la liste des comptes utilisés dans Ganache.
 
 - app._Eirbmons(1) est l'Eirbmon n°1 dans notre Blockchain 
-- app._Eirbmons(2) est l'Eirbmon n°1 dans notre Blockchain
+- app._Eirbmons(2) est l'Eirbmon n°2 dans notre Blockchain
 - app.eirbmonsCount() est le nombre d'Eirbmon qu'on a 
 - app.initAccount({from:acc[1]}) permet d'initialiser le compte n°1 et de lui attribuer un Eirbmon
 - Vérifier que app.eirbmonsCount() est bien changé.
 - app.catchEirbmon(5,{from:acc[2]}) le compte n°2 a attrapé l'Eirbmon orphelin n°5 (Vérifier que l'Eribmon que vous vous attraper est bien un orphelin owner= 0x0000000)
 -  app.transferEirbmon(2,acc[2],3,acc[3]) échange l'Eirbmon 2 du compte 2 avec l'Eirbmon 3 du compte 3 (Vérifier bien que les comptes en entré sont bien les propriétaires des Eirbmon à échanger)
+ 
+ 
  
 	
 /!\ pour se connecter à sa blockchain local il faut remplacer 192.168.0.23 par 127.0.0.1 dans le fichier truffle-config.js
