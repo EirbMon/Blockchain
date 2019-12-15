@@ -23,7 +23,7 @@ contract Eirbmon{
     string[] private allField = ["RSI","SEE","Elec","Matmeca","Info","Telecom"];
     uint[] private allFieldWeight = [0xa,0x8,0x6,0x4,0x2,0x1]; // poids entre 1 et 10 avec 1=> très rare
  
-    string[] private allName = ["Pikachu","Carapuce","Salameche","Roucoul"];
+    string[] private allName = ["Salameche","Roucoul","Carapuce","Pikachu"];
     uint[] private allNameWeight = [0xa,0x6,0x3,0x1]; // poids entre 1 et 10 avec 1=> très rare
 
     uint public eirbmonsCount = 0;
@@ -50,6 +50,7 @@ contract Eirbmon{
         require(!_registeredAccounts[msg.sender]);
         _registeredAccounts[msg.sender] = true;
         addEirbmonToChain("Roucoul",msg.sender,"RSI","roulade",40);
+         generateAnNewEirbmon();
     }
 
     // génère un nouvel Eirbmon random
@@ -128,7 +129,7 @@ contract Eirbmon{
 
     function catchEirbmon(uint _EirbmonId) public returns  (bytes32) {
             require(isExisted(_EirbmonId));
-            require(isOrphan(_EirbmonId));
+        //    require(isOrphan(_EirbmonId));
             generateAnNewEirbmon();
             appropriateEirbmonToOwner(msg.sender,_EirbmonId);
             emit SendEvent("catched");
@@ -138,7 +139,7 @@ contract Eirbmon{
      //Change the owner of an Eirbmon  
     function changeEirbmonOwner(uint idEirbmon,address newOwner,address oldOwner ) public {
         // require (_registeredAccounts[oldOwner],"Sender does not exist");
-        require (oldOwner == _Eirbmons[idEirbmon].owner,"Sender is not the owner");
+     //   require (oldOwner == _Eirbmons[idEirbmon].owner,"Sender is not the owner");
         // require (_registeredAccounts[newOwner],"Receiver does not exist");
         _Eirbmons[idEirbmon].owner = newOwner;
     }
