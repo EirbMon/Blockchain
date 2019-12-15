@@ -10,7 +10,9 @@ contract Eirbmon{
         address owner;
         uint level;
         string field;
-        string atk;
+        uint atk1;
+        uint atk2;
+        uint atk3;
         uint hp;
     }
     event SendEvent(string message);
@@ -34,30 +36,34 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
-        addEirbmonToChain("Pikachu",msg.sender,"telecom","roulade",100);
-        addEirbmonToChain("Roucoul",msg.sender,"info","petite bière",100);
+        addEirbmonToChain("Pikachu",msg.sender,"telecom",1,2,3,100);
+        addEirbmonToChain("Roucoul",msg.sender,"info",1,2,3,100);
         generateAnNewEirbmon();
         generateAnNewEirbmon();
     }
 
     // ajoute un Eirbmon à la chaine
-    function  addEirbmonToChain(string memory name,address owner, string memory field, string memory atk, uint hp) public {
+    function  addEirbmonToChain(string memory name,address owner, string memory field, uint atk1,uint atk2,uint atk3, uint hp) public {
         eirbmonsCount++;
-        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk,hp);
+        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk1,atk2,atk3,hp);
     }
  
     function initAccount() public {
         require(!_registeredAccounts[msg.sender]);
         _registeredAccounts[msg.sender] = true;
-        addEirbmonToChain("Roucoul",msg.sender,"RSI","roulade",40);
+        addEirbmonToChain("Roucoul",msg.sender,"RSI",1,2,3,40);
          generateAnNewEirbmon();
     }
 
     // génère un nouvel Eirbmon random
     function generateAnNewEirbmon() private {
         // génère un nombre entre 1 et la somme des poids à partir des 44 premiers nombres hex du hash
-        uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%sumArray(allAtkWeight)+1;
-        string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
+        // uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%sumArray(allAtkWeight)+1;
+        // string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
+
+        uint atk1 = uint(uint(blockhash(block.number-1))/((0xf+1)**5))%0x9;
+        uint atk2 = uint(uint(blockhash(block.number-1))/((0xf+1)**10))%0x9;
+        uint atk3 = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%0x9;
 
         uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumArray(allFieldWeight);
         string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
@@ -65,9 +71,9 @@ contract Eirbmon{
         uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumArray(allNameWeight);
         string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
-        uint randHp = uint(uint(blockhash(block.number-1))%0x1F4 + 100);
+        uint randHp = uint(uint(blockhash(block.number-1))%0x96 + 10);
 
-        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,randHp);
+        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,atk1,atk2,atk3,randHp);
     }
 
     // renvoie la valeur associé au nombre random passé en arguments en prenant en compte les poids de chaque valeur 
