@@ -7,11 +7,14 @@ contract Eirbmon{
     struct _Eirbmon {
         uint id;
         string name;
-        address owner;
+        address payable owner;
         uint level;
         string field;
         string atk;
         uint hp;
+        uint canBeExhangedTo;
+        uint price;
+        bool canBeSelled;
     }
     event SendEvent(string message);
  
@@ -41,9 +44,9 @@ contract Eirbmon{
     }
 
     // ajoute un Eirbmon à la chaine
-    function  addEirbmonToChain(string memory name,address owner, string memory field, string memory atk, uint hp) public {
+    function  addEirbmonToChain(string memory name,address payable owner, string memory field, string memory atk, uint hp) public {
         eirbmonsCount++;
-        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk,hp);
+        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk,hp,0,0,false);
     }
  
     function initAccount() public {
@@ -122,14 +125,14 @@ contract Eirbmon{
         return block.number;
     }
     
-    function appropriateEirbmonToOwner(address owner,uint _EirbmonId) private {
-          //  require (_registeredAccounts[owner],"Sender does not exist");
+    function appropriateEirbmonToOwner(address payable owner,uint _EirbmonId) private {
+            require (_registeredAccounts[owner],"Sender does not exist");
             _Eirbmons[_EirbmonId].owner = owner;
     }
 
     function catchEirbmon(uint _EirbmonId) public returns  (bytes32) {
-            require(isExisted(_EirbmonId));
-        //    require(isOrphan(_EirbmonId));
+            require(isExisted(_EirbmonId),"eirbmon does not exist");
+            require(isOrphan(_EirbmonId),"the eirbmon you want is orphan");
             generateAnNewEirbmon();
             appropriateEirbmonToOwner(msg.sender,_EirbmonId);
             emit SendEvent("catched");
@@ -137,17 +140,49 @@ contract Eirbmon{
 
 
      //Change the owner of an Eirbmon  
-    function changeEirbmonOwner(uint idEirbmon,address newOwner,address oldOwner ) public {
-        // require (_registeredAccounts[oldOwner],"Sender does not exist");
-     //   require (oldOwner == _Eirbmons[idEirbmon].owner,"Sender is not the owner");
-        // require (_registeredAccounts[newOwner],"Receiver does not exist");
-        _Eirbmons[idEirbmon].owner = newOwner;
+    function exchangeMyEirbmonTo(uint myEirbmonId,uint hisEirbmonId ) public {
+         require (_registeredAccounts[msg.sender],"Sender does not exist");
+         require (msg.sender == _Eirbmons[myEirbmonId].owner,"Sender is not the owner");
+         require (!isOrphan(hisEirbmonId),"the eirbmon you want to exchange is orphan");
+         //Si l'autre joueur a accepté de'échanger son eirbmon avec 
+         if(_Eirbmons[hisEirbmonId].canBeExhangedTo==myEirbmonId){
+            _Eirbmons[hisEirbmonId].canBeExhangedTo = 0;
+            changeEirbmons(myEirbmonId,hisEirbmonId);
+        }
+        //Sinon on est le premier à déclarer d'avoir accépter un échange d'eirbmons
+        else{
+           _Eirbmons[myEirbmonId].canBeExhangedTo = hisEirbmonId;
+            }
     }
 
     // tranfer an 2 Eirbmons
-      function transferEirbmon(uint idEirbmon1,address owner1,uint idEirbmon2,address owner2 ) public {
-          changeEirbmonOwner(idEirbmon2,owner1,owner2);
-          changeEirbmonOwner(idEirbmon1,owner2,owner1);
+      function changeEirbmons(uint idEirbmon1,uint idEirbmon2) private {
+            address payable owner1 = _Eirbmons[idEirbmon1].owner;
+            _Eirbmons[idEirbmon1].owner = _Eirbmons[idEirbmon2].owner;
+            _Eirbmons[idEirbmon2].owner = owner1;
+    }
+
+      function ableSaleEirbmon(uint eirbmonId) public {
+            require(isExisted(eirbmonId),"eirbmon does not exist");
+            require (msg.sender == _Eirbmons[eirbmonId].owner,"Sender is not the owner");
+            _Eirbmons[eirbmonId].canBeSelled = true;
+    }
+
+      function saleEirbmon(uint eirbmonId,uint price) public {
+            ableSaleEirbmon(eirbmonId);
+            _Eirbmons[eirbmonId].price = 1000000000000000000*price;
+    }
+
+      function byEirbmon(uint eirbmonId) public payable {
+            require(_Eirbmons[eirbmonId].canBeSelled,"this eirbmon can't be selled");
+            require(_Eirbmons[eirbmonId].owner!=msg.sender,"You can't bye your Eirbmon");
+            require(_Eirbmons[eirbmonId].price < msg.value,"this eirbmon can't be selled");
+            require (_registeredAccounts[msg.sender],"Sender does not exist");
+           //transfer Ether
+            _Eirbmons[eirbmonId].owner.transfer(_Eirbmons[eirbmonId].price);
+            msg.sender.transfer(msg.value-_Eirbmons[eirbmonId].price);
+            //transfer Eirbmon
+            _Eirbmons[eirbmonId].owner = msg.sender;
     }
 
 }
