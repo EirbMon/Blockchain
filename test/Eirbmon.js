@@ -30,7 +30,4 @@ it("generate an Eirbmon",function(){
 })
                                    
 
-//test in console
-//Eirbmon.deployed().then(instance=>{app=instance;event = instance.SendEvent({},{fromBlock:0, toBlock:'latest'}).watch(function(err,event){console.log("event",event);})});web3.eth.getAccounts().then(A=>acc=A)
-//Eirbmon.deployed().then(instance=>{app=instance;});web3.eth.getAccounts().then(A=>acc=A)
-//
+
