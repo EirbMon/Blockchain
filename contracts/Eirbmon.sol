@@ -21,14 +21,16 @@ contract Eirbmon{
  
     uint public rnd = 1;
 
-    string[] private allAtk = ["roulade","petite bière","brasse","rattrapage"];
-    uint[] private allAtkWeight = [0xa,0x6,0x3,0x1]; // poids entre 1 et 10 avec 1=> très rare
+
+    uint[] private allAtkWeight = [0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xa]; // poids entre 1 et 10 avec 1=> très rare
 
     string[] private allField = ["RSI","SEE","Elec","Matmeca","Info","Telecom"];
     uint[] private allFieldWeight = [0xa,0x8,0x6,0x4,0x2,0x1]; // poids entre 1 et 10 avec 1=> très rare
- 
+    uint sumFieldWeight = 31;
+
     string[] private allName = ["Roucoul","Salameche","Carapuce","Pikachu"];
     uint[] private allNameWeight = [0xa,0x6,0x3,0x1]; // poids entre 1 et 10 avec 1=> très rare
+    uint sumNameWeight = 20;
 
     uint public eirbmonsCount = 0;
     uint public registeredCount = 0;
@@ -38,8 +40,8 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
-        addEirbmonToChain("Pikachu",msg.sender,"telecom",1,2,3,100,19+30+10);
-        addEirbmonToChain("Roucoul",msg.sender,"info",1,2,3,100,0+28+10);
+        addEirbmonToChain("Pikachu",msg.sender,"Telecom",1,2,3,100,19+30+10);
+        addEirbmonToChain("Roucoul",msg.sender,"Info",1,2,3,100,0+28+10);
         generateAnNewEirbmon();
         generateAnNewEirbmon();
     }
@@ -57,47 +59,51 @@ contract Eirbmon{
          generateAnNewEirbmon();
     }
 
+    
     // génère un nouvel Eirbmon random
     function generateAnNewEirbmon() private {
         // génère un nombre entre 1 et la somme des poids à partir des 44 premiers nombres hex du hash
         // uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%sumArray(allAtkWeight)+1;
         // string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
 
-        uint atk1 = uint(uint(blockhash(block.number-1))/((0xf+1)**5))%0x9;
-        uint atk2 = uint(uint(blockhash(block.number-1))/((0xf+1)**10))%0x9;
-        uint atk3 = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%0x9;
+        uint atk1 = chooseAtk(uint(uint(blockhash(block.number-1))/((0xf+1)**5))%0x2D);
+        uint atk2 = chooseAtk(uint(uint(blockhash(block.number-1))/((0xf+1)**10))%0x2D);
+        uint atk3 = chooseAtk(uint(uint(blockhash(block.number-1))/((0xf+1)**16))%0x2D);
 
-        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumArray(allFieldWeight)+1;
-        string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
+        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumFieldWeight+1;
+        uint selectedField = getValueFromRand(allFieldWeight,randFieldWeight);
 
-        uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumArray(allNameWeight)+1;
-        string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
-        uint randHp = uint(uint(blockhash(block.number-1))%0x96 + 10);
+        uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumNameWeight+1;
+        uint selectedName = getValueFromRand(allNameWeight,randNameWeight);
 
-        uint value = randFieldWeight + randNameWeight + randHp/10;
+        uint randHp = uint(uint(blockhash(block.number-1))%0x8C + 10);
 
-        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,atk1,atk2,atk3,randHp,value);
+
+        uint value = atk1 + atk2 + atk3 + randHp/7 + sumNameWeight*(11-allNameWeight[selectedName])/10 + sumFieldWeight*(11-allFieldWeight[selectedField])/10;
+
+        addEirbmonToChain(allName[selectedName],0x0000000000000000000000000000000000000000,allField[selectedField],atk1,atk2,atk3,randHp,value);
     }
 
+    function chooseAtk(uint randNumber) private returns (uint){
+            uint sum = 0x0;
+            for(uint i = 0;i < 45;i++){
+                sum += allAtkWeight[i];
+                if(randNumber <= sum){
+                    return i;
+                }
+            }
+        }
+
     // renvoie la valeur associé au nombre random passé en arguments en prenant en compte les poids de chaque valeur 
-    function getValueFromRand(string[] memory valueArray,uint[] memory weightArray,uint randNameWeight) public pure returns(string memory) {
+    function getValueFromRand(uint[] memory weightArray,uint randNameWeight) public pure returns(uint) {
         uint sum = 0x0;
         for(uint i = 0;i < weightArray.length;i++){
             sum += weightArray[i];
             if(randNameWeight <= sum){
-                return valueArray[i];
+                return i;
             }
         }
-    }
-
-    //Fait la somme de tous les éléments d'un tableau 
-    function sumArray(uint[] memory _array) public pure returns(uint) {
-        uint sum = 0x0;
-         for(uint i;i < _array.length;i++){
-            sum += _array[i];
-        }
-        return sum;
     }
 
 
@@ -192,6 +198,23 @@ contract Eirbmon{
             _Eirbmons[eirbmonId].owner = msg.sender;
             //reset Eirbmon fields
             _Eirbmons[eirbmonId].canBeSelled = false;
+    }
+
+    
+    function getAtk(uint id) public view returns(uint[3] memory)  {
+        return _Eirbmons[id].atk;
+    }
+
+    function getValueFromWeight(uint sumArray,string[] memory valueArray,uint[] memory weightArray,string memory research ) public pure returns(uint) {
+        for(uint i = 0;i < valueArray.length;i++){
+            if(keccak256(abi.encodePacked(valueArray[i])) == keccak256(abi.encodePacked(research))){
+                return sumArray*(11-weightArray[i])/10;
+            }
+        }
+    }
+
+    function getValue(uint _EirbmonId) public view returns(uint){
+        return _Eirbmons[_EirbmonId].level*2 + _Eirbmons[_EirbmonId].atk[0] + _Eirbmons[_EirbmonId].atk[1] + _Eirbmons[_EirbmonId].atk[2]+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].name) + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7 ;
     }
 
 }
