@@ -75,7 +75,7 @@ contract Eirbmon{
 
         uint randHp = uint(uint(blockhash(block.number-1))%0x96 + 10);
 
-        uint value = randFieldWeight + randNameWeight + randHp/10;
+        uint value = atk1 + atk2 + atk3 + randFieldWeight + randNameWeight + randHp/10;
 
         addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,atk1,atk2,atk3,randHp,value);
     }
@@ -120,16 +120,15 @@ contract Eirbmon{
             }
             return ownerEirbmons;
     }
+    function getAtks(uint _eirbmonId) public view returns (uint[3] memory) {
+        return _Eirbmons[_eirbmonId].atk;
+    }
 
     function isExisted(uint _EirbmonId) public view returns (bool){
         return _EirbmonId<=eirbmonsCount;
     }
     function isOrphan(uint _EirbmonId) public view returns (bool){
         return _Eirbmons[_EirbmonId].owner == 0x0000000000000000000000000000000000000000;
-    }
-
-    function getBlockNumber() public view returns(uint){
-        return block.number;
     }
     
     function appropriateEirbmonToOwner(address payable owner,uint _EirbmonId) private {
@@ -198,12 +197,14 @@ contract Eirbmon{
             require(_Eirbmons[eirbmonId].owner==msg.sender,"The Eirbmon is not yours");
             _Eirbmons[eirbmonId].name = evolutionName;
             _Eirbmons[eirbmonId].evolve = _Eirbmons[eirbmonId].evolve + 1;
-            _Eirbmons[eirbmonId].atk1 = min(_Eirbmons[eirbmonId].atk1 + 2,9);
-            _Eirbmons[eirbmonId].atk2 = min(_Eirbmons[eirbmonId].atk2 + 2,9);
-            _Eirbmons[eirbmonId].atk3 = min(_Eirbmons[eirbmonId].atk3 + 2,9);
+            _Eirbmons[eirbmonId].atk[1] = min(_Eirbmons[eirbmonId].atk[1] + 2,9);
+            _Eirbmons[eirbmonId].atk[2] = min(_Eirbmons[eirbmonId].atk[2] + 2,9);
+            _Eirbmons[eirbmonId].atk[0] = min(_Eirbmons[eirbmonId].atk[0] + 2,9);
             _Eirbmons[eirbmonId].hp = _Eirbmons[eirbmonId].hp + _Eirbmons[eirbmonId].evolve*40;
             _Eirbmons[eirbmonId].canBeExhangedTo = 0;
             _Eirbmons[eirbmonId].canBeSelled = false;
+            //updateValue(eirbmonId)
+
     }
 
        function min(uint a, uint b) private pure returns (uint) {
