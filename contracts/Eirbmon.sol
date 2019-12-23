@@ -8,7 +8,7 @@ contract Eirbmon{
         uint id;
         string name;
         address payable owner;
-        uint level;
+        uint evolve;
         string field;
         uint[3] atk;
         uint hp;
@@ -126,16 +126,15 @@ contract Eirbmon{
             }
             return ownerEirbmons;
     }
+    function getAtks(uint _eirbmonId) public view returns (uint[3] memory) {
+        return _Eirbmons[_eirbmonId].atk;
+    }
 
     function isExisted(uint _EirbmonId) public view returns (bool){
         return _EirbmonId<=eirbmonsCount;
     }
     function isOrphan(uint _EirbmonId) public view returns (bool){
         return _Eirbmons[_EirbmonId].owner == 0x0000000000000000000000000000000000000000;
-    }
-
-    function getBlockNumber() public view returns(uint){
-        return block.number;
     }
     
     function appropriateEirbmonToOwner(address payable owner,uint _EirbmonId) private {
@@ -168,14 +167,14 @@ contract Eirbmon{
             }
     }
 
-    // tranfer an 2 Eirbmons
+    // échanger les proprétaires des eirbmons
       function changeEirbmons(uint idEirbmon1,uint idEirbmon2) private {
             address payable owner1 = _Eirbmons[idEirbmon1].owner;
             _Eirbmons[idEirbmon1].owner = _Eirbmons[idEirbmon2].owner;
             _Eirbmons[idEirbmon2].owner = owner1;
     }
-
-      function ableSaleEirbmon(uint eirbmonId) public {
+    // Changer le status pour que l'eirbmon peut étre vendu. 
+      function ableSaleEirbmon(uint eirbmonId) private {
             require(isExisted(eirbmonId),"eirbmon does not exist");
             require (msg.sender == _Eirbmons[eirbmonId].owner,"Sender is not the owner");
             _Eirbmons[eirbmonId].canBeSelled = true;
@@ -214,7 +213,25 @@ contract Eirbmon{
     }
 
     function getValue(uint _EirbmonId) public view returns(uint){
-        return _Eirbmons[_EirbmonId].level*2 + _Eirbmons[_EirbmonId].atk[0] + _Eirbmons[_EirbmonId].atk[1] + _Eirbmons[_EirbmonId].atk[2]+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].name) + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7 ;
+        return _Eirbmons[_EirbmonId].evolve*2 + _Eirbmons[_EirbmonId].atk[0] + _Eirbmons[_EirbmonId].atk[1] + _Eirbmons[_EirbmonId].atk[2]+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].name) + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7 ;
+    }
+
+      function evolveEirbmon(uint eirbmonId, string memory evolutionName) public {
+            require(_Eirbmons[eirbmonId].owner==msg.sender,"The Eirbmon is not yours");
+            _Eirbmons[eirbmonId].name = evolutionName;
+            _Eirbmons[eirbmonId].evolve = _Eirbmons[eirbmonId].evolve + 1;
+            _Eirbmons[eirbmonId].atk[1] = min(_Eirbmons[eirbmonId].atk[1] + 2,9);
+            _Eirbmons[eirbmonId].atk[2] = min(_Eirbmons[eirbmonId].atk[2] + 2,9);
+            _Eirbmons[eirbmonId].atk[0] = min(_Eirbmons[eirbmonId].atk[0] + 2,9);
+            _Eirbmons[eirbmonId].hp = _Eirbmons[eirbmonId].hp + _Eirbmons[eirbmonId].evolve*40;
+            _Eirbmons[eirbmonId].canBeExhangedTo = 0;
+            _Eirbmons[eirbmonId].canBeSelled = false;
+            _Eirbmons[eirbmonId].value = getValue(eirbmonId);
+
+    }
+
+       function min(uint a, uint b) private pure returns (uint) {
+        return a < b ? a : b;
     }
 
 }
