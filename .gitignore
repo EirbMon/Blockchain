@@ -3,8 +3,5 @@
 /build/
 package-lock.json
 \.vscode/
-<<<<<<< HEAD
 /src/
 truffle-config.js
-=======
->>>>>>> parent of d802edd... Merge pull request #1 from EirbMon/dev

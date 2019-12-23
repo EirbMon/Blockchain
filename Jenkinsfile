@@ -16,7 +16,7 @@ pipeline {
         sh 'npm install'
         sh 'truffle compile'
         sh 'truffle migrate --reset'
-        sh 'cp -r  build/contracts/Eirbmon.json /Shared'
+        sh 'cp build/contracts/* /Shared'
         echo 'copy'
       }
     }
@@ -35,13 +35,10 @@ pipeline {
         sh 'npm install'
         sh 'truffle compile'
         sh 'truffle migrate --reset'
-        sh 'cp build/contracts/Eirbmon.json /Shared'
+        sh 'pwd'
+        sh 'cp build/contracts/* /Shared'
         echo 'copy'
       }
     }
   }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> parent of d802edd... Merge pull request #1 from EirbMon/dev
