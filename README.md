@@ -52,7 +52,7 @@ Ouvrir un terminal sur /Blockchain/:
 
 Ouvrir Ganache et lance bash initBlockchain.sh dans le terminal si ce n'est pas encore fait et lancer : 
 - truffle console
-- executer ce script Eirbmon.deployed().then(instance=>{app=instance;});web3.eth.getAccounts().then(A=>acc=A)
+- executer ce script var app; Eirbmon.deployed().then(instance=>{app=instance;});web3.eth.getAccounts().then(A=>acc=A)
 app est l'instanciation du smart contract, et acc est la liste des comptes utilisés dans Ganache.
 
 - app._Eirbmons(1) est l'Eirbmon n°1 dans notre Blockchain 
@@ -67,3 +67,5 @@ app est l'instanciation du smart contract, et acc est la liste des comptes utili
  
 	
 /!\ pour se connecter à sa blockchain local il faut remplacer 192.168.0.23 par 127.0.0.1 dans le fichier truffle-config.js
+
+
