@@ -16,11 +16,10 @@ contract Eirbmon{
         uint price;
         bool canBeSelled;
         uint value;
+        uint256 birthDate;
     }
     event SendEvent(string message);
  
-    uint public rnd = 1;
-
 
     uint[] private allAtkWeight = [0x1,0x2,0x3,0x4,0x5,0x6,0x7,0x8,0x9,0xa]; // poids entre 1 et 10 avec 1=> très rare
 
@@ -49,8 +48,8 @@ contract Eirbmon{
     // ajoute un Eirbmon à la chaine
     function  addEirbmonToChain(string memory name,address payable owner, string memory field, uint atk1, uint atk2, uint atk3, uint hp,uint value) public {
         eirbmonsCount++;
-        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,[atk1,atk2,atk3],hp,0,0,false,value);
-    }
+        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,[atk1,atk2,atk3],hp,0,0,false,value,now);
+   }
  
     function initAccount() public {
         require(!_registeredAccounts[msg.sender]);
@@ -174,10 +173,11 @@ contract Eirbmon{
             _Eirbmons[idEirbmon2].owner = owner1;
     }
     // Changer le status pour que l'eirbmon peut étre vendu. 
-      function ableSaleEirbmon(uint eirbmonId) private {
+      function ableSaleEirbmon(uint eirbmonId) public {
             require(isExisted(eirbmonId),"eirbmon does not exist");
             require (msg.sender == _Eirbmons[eirbmonId].owner,"Sender is not the owner");
             _Eirbmons[eirbmonId].canBeSelled = true;
+            _Eirbmons[eirbmonId].price = getValue(eirbmonId);
     }
 
       function saleEirbmon(uint eirbmonId,uint price) public {
@@ -199,7 +199,10 @@ contract Eirbmon{
             _Eirbmons[eirbmonId].canBeSelled = false;
     }
 
-    
+    function getEirbmonAge (uint Id) public view returns(uint256 time){
+        return block.timestamp - _Eirbmons[Id].birthDate;
+    }
+     
     function getAtk(uint id) public view returns(uint[3] memory)  {
         return _Eirbmons[id].atk;
     }
