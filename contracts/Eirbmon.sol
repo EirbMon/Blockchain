@@ -8,7 +8,7 @@ contract Eirbmon{
         uint id;
         string name;
         address payable owner;
-        uint level;
+        uint evolve;
         string field;
         uint atk1;
         uint atk2;
@@ -161,14 +161,14 @@ contract Eirbmon{
             }
     }
 
-    // tranfer an 2 Eirbmons
+    // échanger les proprétaires des eirbmons
       function changeEirbmons(uint idEirbmon1,uint idEirbmon2) private {
             address payable owner1 = _Eirbmons[idEirbmon1].owner;
             _Eirbmons[idEirbmon1].owner = _Eirbmons[idEirbmon2].owner;
             _Eirbmons[idEirbmon2].owner = owner1;
     }
-
-      function ableSaleEirbmon(uint eirbmonId) public {
+    // Changer le status pour que l'eirbmon peut étre vendu. 
+      function ableSaleEirbmon(uint eirbmonId) private {
             require(isExisted(eirbmonId),"eirbmon does not exist");
             require (msg.sender == _Eirbmons[eirbmonId].owner,"Sender is not the owner");
             _Eirbmons[eirbmonId].canBeSelled = true;
@@ -191,6 +191,22 @@ contract Eirbmon{
             _Eirbmons[eirbmonId].owner = msg.sender;
             //reset Eirbmon fields
             _Eirbmons[eirbmonId].canBeSelled = false;
+    }
+
+      function evolveEirbmon(uint eirbmonId, string memory evolutionName) public {
+            require(_Eirbmons[eirbmonId].owner==msg.sender,"The Eirbmon is not yours");
+            _Eirbmons[eirbmonId].name = evolutionName;
+            _Eirbmons[eirbmonId].evolve = _Eirbmons[eirbmonId].evolve + 1;
+            _Eirbmons[eirbmonId].atk1 = min(_Eirbmons[eirbmonId].atk1 + 2,9);
+            _Eirbmons[eirbmonId].atk2 = min(_Eirbmons[eirbmonId].atk2 + 2,9);
+            _Eirbmons[eirbmonId].atk3 = min(_Eirbmons[eirbmonId].atk3 + 2,9);
+            _Eirbmons[eirbmonId].hp = _Eirbmons[eirbmonId].hp + _Eirbmons[eirbmonId].evolve*40;
+            _Eirbmons[eirbmonId].canBeExhangedTo = 0;
+            _Eirbmons[eirbmonId].canBeSelled = false;
+    }
+
+       function min(uint a, uint b) private pure returns (uint) {
+        return a < b ? a : b;
     }
 
 }
