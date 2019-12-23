@@ -10,13 +10,12 @@ contract Eirbmon{
         address payable owner;
         uint level;
         string field;
-        uint atk1;
-        uint atk2;
-        uint atk3;
+        uint[3] atk;
         uint hp;
         uint canBeExhangedTo;
         uint price;
         bool canBeSelled;
+        uint value;
     }
     event SendEvent(string message);
  
@@ -28,7 +27,7 @@ contract Eirbmon{
     string[] private allField = ["RSI","SEE","Elec","Matmeca","Info","Telecom"];
     uint[] private allFieldWeight = [0xa,0x8,0x6,0x4,0x2,0x1]; // poids entre 1 et 10 avec 1=> très rare
  
-    string[] private allName = ["Salameche","Roucoul","Carapuce","Pikachu"];
+    string[] private allName = ["Roucoul","Salameche","Carapuce","Pikachu"];
     uint[] private allNameWeight = [0xa,0x6,0x3,0x1]; // poids entre 1 et 10 avec 1=> très rare
 
     uint public eirbmonsCount = 0;
@@ -39,22 +38,22 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
-        addEirbmonToChain("Pikachu",msg.sender,"telecom",1,2,3,100);
-        addEirbmonToChain("Roucoul",msg.sender,"info",1,2,3,100);
+        addEirbmonToChain("Pikachu",msg.sender,"telecom",1,2,3,100,19+30+10);
+        addEirbmonToChain("Roucoul",msg.sender,"info",1,2,3,100,0+28+10);
         generateAnNewEirbmon();
         generateAnNewEirbmon();
     }
 
     // ajoute un Eirbmon à la chaine
-    function  addEirbmonToChain(string memory name,address payable owner, string memory field, uint atk1, uint atk2, uint atk3, uint hp) public {
+    function  addEirbmonToChain(string memory name,address payable owner, string memory field, uint atk1, uint atk2, uint atk3, uint hp,uint value) public {
         eirbmonsCount++;
-        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk1,atk2,atk3,hp,0,0,false);
+        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,[atk1,atk2,atk3],hp,0,0,false,value);
     }
  
     function initAccount() public {
         require(!_registeredAccounts[msg.sender]);
         _registeredAccounts[msg.sender] = true;
-        addEirbmonToChain("Roucoul",msg.sender,"RSI",1,2,3,40);
+        addEirbmonToChain("Roucoul",msg.sender,"RSI",1,2,3,40,0+0+4);
          generateAnNewEirbmon();
     }
 
@@ -68,15 +67,17 @@ contract Eirbmon{
         uint atk2 = uint(uint(blockhash(block.number-1))/((0xf+1)**10))%0x9;
         uint atk3 = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%0x9;
 
-        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumArray(allFieldWeight);
+        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumArray(allFieldWeight)+1;
         string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
 
-        uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumArray(allNameWeight);
+        uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumArray(allNameWeight)+1;
         string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
         uint randHp = uint(uint(blockhash(block.number-1))%0x96 + 10);
 
-        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,atk1,atk2,atk3,randHp);
+        uint value = randFieldWeight + randNameWeight + randHp/10;
+
+        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,atk1,atk2,atk3,randHp,value);
     }
 
     // renvoie la valeur associé au nombre random passé en arguments en prenant en compte les poids de chaque valeur 
