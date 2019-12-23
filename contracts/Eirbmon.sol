@@ -10,13 +10,9 @@ contract Eirbmon{
         address owner;
         uint level;
         string field;
-        uint atk1;
-        uint atk2;
-        uint atk3;
+        string atk;
         uint hp;
     }
-    event SendEvent(string message);
- 
     uint public rnd = 1;
 
     string[] private allAtk = ["roulade","petite bière","brasse","rattrapage"];
@@ -25,7 +21,7 @@ contract Eirbmon{
     string[] private allField = ["RSI","SEE","Elec","Matmeca","Info","Telecom"];
     uint[] private allFieldWeight = [0xa,0x8,0x6,0x4,0x2,0x1]; // poids entre 1 et 10 avec 1=> très rare
  
-    string[] private allName = ["Salameche","Roucoul","Carapuce","Pikachu"];
+    string[] private allName = ["nom1","nom2","nom3","nom4"];
     uint[] private allNameWeight = [0xa,0x6,0x3,0x1]; // poids entre 1 et 10 avec 1=> très rare
 
     uint public eirbmonsCount = 0;
@@ -36,44 +32,34 @@ contract Eirbmon{
     mapping(address => bool) public _registeredAccounts;
 
     constructor () public {
-        addEirbmonToChain("Pikachu",msg.sender,"telecom",1,2,3,100);
-        addEirbmonToChain("Roucoul",msg.sender,"info",1,2,3,100);
-        generateAnNewEirbmon();
-        generateAnNewEirbmon();
+        addEirbmonToChain("pika",0x0000000000000000000000000000000000000000,"telecom","roulade",100);
     }
 
     // ajoute un Eirbmon à la chaine
-    function  addEirbmonToChain(string memory name,address owner, string memory field, uint atk1,uint atk2,uint atk3, uint hp) public {
+    function  addEirbmonToChain(string memory name,address owner, string memory field, string memory atk, uint hp) public {
         eirbmonsCount++;
-        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk1,atk2,atk3,hp);
+        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,atk,hp);
     }
  
     function initAccount() public {
         require(!_registeredAccounts[msg.sender]);
         _registeredAccounts[msg.sender] = true;
-        addEirbmonToChain("Roucoul",msg.sender,"RSI",1,2,3,40);
-         generateAnNewEirbmon();
+        addEirbmonToChain("nom1",msg.sender,"RSI","roulade",40);
     }
 
     // génère un nouvel Eirbmon random
-    function generateAnNewEirbmon() private {
+    function generateAnNewEirbmon(uint bloc) public {
         // génère un nombre entre 1 et la somme des poids à partir des 44 premiers nombres hex du hash
-        // uint randAtkWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%sumArray(allAtkWeight)+1;
-        // string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
+        uint randAtkWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**22))%sumArray(allAtkWeight)+1;
+        string memory selectedAtk = getValueFromRand(allAtk,allAtkWeight,randAtkWeight);
 
-        uint atk1 = uint(uint(blockhash(block.number-1))/((0xf+1)**5))%0x9;
-        uint atk2 = uint(uint(blockhash(block.number-1))/((0xf+1)**10))%0x9;
-        uint atk3 = uint(uint(blockhash(block.number-1))/((0xf+1)**16))%0x9;
-
-        uint randFieldWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**32))%sumArray(allFieldWeight);
+        uint randFieldWeight = uint(uint(blockhash(block.number-bloc))/((0xf+1)**44))%sumArray(allFieldWeight);
         string memory selectedField = getValueFromRand(allField,allFieldWeight,randFieldWeight);
 
-        uint randNameWeight = uint(uint(blockhash(block.number-1))/((0xf+1)**48))%sumArray(allNameWeight);
+        uint randNameWeight = uint(uint(blockhash(block.number-bloc)))%sumArray(allNameWeight);
         string memory selectedName = getValueFromRand(allName,allNameWeight,randNameWeight);
 
-        uint randHp = uint(uint(blockhash(block.number-1))%0x96 + 10);
-
-        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,atk1,atk2,atk3,randHp);
+        addEirbmonToChain(selectedName,0x0000000000000000000000000000000000000000,selectedField,selectedAtk,100);
     }
 
     // renvoie la valeur associé au nombre random passé en arguments en prenant en compte les poids de chaque valeur 
@@ -116,46 +102,6 @@ contract Eirbmon{
             }
             return ownerEirbmons;
     }
-
-    function isExisted(uint _EirbmonId) public view returns (bool){
-        return _EirbmonId<=eirbmonsCount;
-    }
-    function isOrphan(uint _EirbmonId) public view returns (bool){
-        return _Eirbmons[_EirbmonId].owner == 0x0000000000000000000000000000000000000000;
-    }
-
-    function getBlockNumber() public view returns(uint){
-        return block.number;
-    }
-    
-    function appropriateEirbmonToOwner(address owner,uint _EirbmonId) private {
-          //  require (_registeredAccounts[owner],"Sender does not exist");
-            _Eirbmons[_EirbmonId].owner = owner;
-    }
-
-    function catchEirbmon(uint _EirbmonId) public returns  (bytes32) {
-            require(isExisted(_EirbmonId));
-        //    require(isOrphan(_EirbmonId));
-            generateAnNewEirbmon();
-            appropriateEirbmonToOwner(msg.sender,_EirbmonId);
-            emit SendEvent("catched");
-    }
-
-
-     //Change the owner of an Eirbmon  
-    function changeEirbmonOwner(uint idEirbmon,address newOwner,address oldOwner ) public {
-        // require (_registeredAccounts[oldOwner],"Sender does not exist");
-     //   require (oldOwner == _Eirbmons[idEirbmon].owner,"Sender is not the owner");
-        // require (_registeredAccounts[newOwner],"Receiver does not exist");
-        _Eirbmons[idEirbmon].owner = newOwner;
-    }
-
-    // tranfer an 2 Eirbmons
-      function transferEirbmon(uint idEirbmon1,address owner1,uint idEirbmon2,address owner2 ) public {
-          changeEirbmonOwner(idEirbmon2,owner1,owner2);
-          changeEirbmonOwner(idEirbmon1,owner2,owner1);
-    }
-
 }
 
 
