@@ -176,8 +176,15 @@ contract Eirbmon{
       function ableSaleEirbmon(uint eirbmonId) public {
             require(isExisted(eirbmonId),"eirbmon does not exist");
             require (msg.sender == _Eirbmons[eirbmonId].owner,"Sender is not the owner");
+            // require (_Eirbmons[eirbmonId].canBeSelled == false,"the eirbmon is already on selling");
             _Eirbmons[eirbmonId].canBeSelled = true;
-            _Eirbmons[eirbmonId].price = getValue(eirbmonId);
+            _Eirbmons[eirbmonId].price = 1000000000000000000*_Eirbmons[eirbmonId].value;
+    }
+      function cancelEirbmonSelling(uint eirbmonId) public {
+            require(isExisted(eirbmonId),"eirbmon does not exist");
+            require (msg.sender == _Eirbmons[eirbmonId].owner,"Sender is not the owner");
+            require (_Eirbmons[eirbmonId].canBeSelled,"the eirbmon is not on selling yet");
+            _Eirbmons[eirbmonId].canBeSelled = false;
     }
 
       function saleEirbmon(uint eirbmonId,uint price) public {
@@ -188,7 +195,7 @@ contract Eirbmon{
       function byEirbmon(uint eirbmonId) public payable {
             require(_Eirbmons[eirbmonId].canBeSelled,"this eirbmon can't be selled");
             require(_Eirbmons[eirbmonId].owner!=msg.sender,"You can't bye your Eirbmon");
-            require(_Eirbmons[eirbmonId].price < msg.value,"this eirbmon can't be selled");
+            require(_Eirbmons[eirbmonId].price <= msg.value,"this eirbmon can't be selled");
             require (_registeredAccounts[msg.sender],"Sender does not exist");
            //transfer Ether
             _Eirbmons[eirbmonId].owner.transfer(_Eirbmons[eirbmonId].price);
