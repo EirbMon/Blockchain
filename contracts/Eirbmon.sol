@@ -54,7 +54,7 @@ contract Eirbmon{
     function initAccount() public {
         require(!_registeredAccounts[msg.sender]);
         _registeredAccounts[msg.sender] = true;
-        addEirbmonToChain("Roucoul",msg.sender,"RSI",1,2,3,40,0+0+4);
+        addEirbmonToChain("Roucoul",msg.sender,"RSI",1,2,3,40,0+0+1);
          generateAnNewEirbmon();
     }
 
@@ -79,7 +79,7 @@ contract Eirbmon{
         uint randHp = uint(uint(blockhash(block.number-1))%0x8C + 10);
 
 
-        uint value = atk1 + atk2 + atk3 + randHp/7 + sumNameWeight*(11-allNameWeight[selectedName])/10 + sumFieldWeight*(11-allFieldWeight[selectedField])/10;
+        uint value = (atk1/3 + atk2/3 + atk3/3 + randHp/7 + 2*sumNameWeight*(11-allNameWeight[selectedName])/10 + sumFieldWeight*(11-allFieldWeight[selectedField])/10)/10;
 
         addEirbmonToChain(allName[selectedName],0x0000000000000000000000000000000000000000,allField[selectedField],atk1,atk2,atk3,randHp,value);
     }
@@ -223,7 +223,7 @@ contract Eirbmon{
     }
 
     function getValue(uint _EirbmonId) public view returns(uint){
-        return _Eirbmons[_EirbmonId].evolve*2 + _Eirbmons[_EirbmonId].atk[0] + _Eirbmons[_EirbmonId].atk[1] + _Eirbmons[_EirbmonId].atk[2]+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].name) + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7 ;
+        return (_Eirbmons[_EirbmonId].evolve*2 + _Eirbmons[_EirbmonId].atk[0]/3 + _Eirbmons[_EirbmonId].atk[1]/3 + _Eirbmons[_EirbmonId].atk[2]/3+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].name)*2 + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7)/10 ;
     }
 
       function evolveEirbmon(uint eirbmonId, string memory evolutionName) public {
