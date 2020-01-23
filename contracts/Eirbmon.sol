@@ -6,7 +6,7 @@ contract Eirbmon{
 
     struct _Eirbmon {
         uint id;
-        string name;
+        string Type;
         address payable owner;
         uint evolve;
         string field;
@@ -46,9 +46,9 @@ contract Eirbmon{
     }
 
     // ajoute un Eirbmon à la chaine
-    function  addEirbmonToChain(string memory name,address payable owner, string memory field, uint atk1, uint atk2, uint atk3, uint hp,uint value) public {
+    function  addEirbmonToChain(string memory Type,address payable owner, string memory field, uint atk1, uint atk2, uint atk3, uint hp,uint value) public {
         eirbmonsCount++;
-        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,name,owner,0,field,[atk1,atk2,atk3],hp,0,0,false,value,now);
+        _Eirbmons[eirbmonsCount] = _Eirbmon(eirbmonsCount,Type,owner,0,field,[atk1,atk2,atk3],hp,0,0,false,value,now);
    }
  
     function initAccount() public {
@@ -112,7 +112,7 @@ contract Eirbmon{
     }
 
     // renvoie les Eirbmons d'un compte
-    //attention à ne pas utiliser cet appel dans les fonctions de type write.
+    //attention à ne pas utiliser cet appel dans les fonctions de Type write.
     function getEirbmon(address owner) public view returns(_Eirbmon[] memory )  {
             require(_registeredAccounts[owner]);
             _Eirbmon[] memory ownerEirbmons;
@@ -223,12 +223,12 @@ contract Eirbmon{
     }
 
     function getValue(uint _EirbmonId) public view returns(uint){
-        return (_Eirbmons[_EirbmonId].evolve*2 + _Eirbmons[_EirbmonId].atk[0]/3 + _Eirbmons[_EirbmonId].atk[1]/3 + _Eirbmons[_EirbmonId].atk[2]/3+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].name)*2 + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7)/10 ;
+        return (_Eirbmons[_EirbmonId].evolve*2 + _Eirbmons[_EirbmonId].atk[0]/3 + _Eirbmons[_EirbmonId].atk[1]/3 + _Eirbmons[_EirbmonId].atk[2]/3+ getValueFromWeight(sumNameWeight,allName,allNameWeight,_Eirbmons[_EirbmonId].Type)*2 + getValueFromWeight(sumFieldWeight,allField,allFieldWeight,_Eirbmons[_EirbmonId].field) + _Eirbmons[_EirbmonId].hp/7)/10 ;
     }
 
       function evolveEirbmon(uint eirbmonId, string memory evolutionName) public {
             require(_Eirbmons[eirbmonId].owner==msg.sender,"The Eirbmon is not yours");
-            _Eirbmons[eirbmonId].name = evolutionName;
+            _Eirbmons[eirbmonId].Type = evolutionName;
             _Eirbmons[eirbmonId].evolve = _Eirbmons[eirbmonId].evolve + 1;
             _Eirbmons[eirbmonId].atk[1] = min(_Eirbmons[eirbmonId].atk[1] + 2,9);
             _Eirbmons[eirbmonId].atk[2] = min(_Eirbmons[eirbmonId].atk[2] + 2,9);
